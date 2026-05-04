@@ -1,90 +1,141 @@
-*{
+:root {
+  --bg-color: #050505;
+  --heart-color: #ff2d55;
+  --glow-color: rgba(255, 45, 85, 0.6);
+  --accent-color: #ff718d;
+}
+
+* {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  position: relative;
-}
-
-body,
-main,
-div {
-  height: 100vh;
-  width: 100%;
-  overflow: hidden;
-  display: grid;
 }
 
 body {
-  background: radial-gradient(
-    circle at 55% 55%,
-    hsl(0, 100%, 50%),
-    hsl(30, 100%, 50%),
-    hsl(60, 100%, 50%),
-    hsl(140, 100%, 50%),
-    hsl(190, 100%, 50%),
-    hsl(260, 100%, 50%),
-    hsl(330, 100%, 50%)40%
-  );
-}
-
-svg {
-  width: 100vmin;
-  height: 100vmin;
-  margin: auto;
+  height: 100vh;
+  width: 100%;
+  background-color: var(--bg-color);
+  background-image: 
+    radial-gradient(circle at 50% 50%, #1a0a1a 0%, #050505 100%);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 main {
-  grid-column: 1 / 2;
-  grid-row: 1 / 2;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
 }
 
-div {
-  background: #000;
-  mix-blend-mode: multiply;
-  grid-column: 1 / 2;
-  grid-row: 1 / 2;
-}
-
-main::after {
+main::before {
   content: "";
   position: absolute;
   inset: 0;
   background: radial-gradient(
-    circle at 55% 55%,
-    hsl(0, 100%, 50%),
-    hsl(30, 100%, 50%),
-    hsl(60, 100%, 50%),
-    hsl(140, 100%, 50%),
-    hsl(190, 100%, 50%),
-    hsl(260, 100%, 50%),
-    hsl(330, 100%, 50%)40%
+    circle at 50% 50%,
+    var(--glow-color) 0%,
+    transparent 60%
   );
-  animation: subtle 9000ms infinite linear;
+  opacity: 0.15;
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+
+div {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  filter: drop-shadow(0 0 20px var(--glow-color));
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+svg {
+  width: 80vmin;
+  height: 80vmin;
+  filter: drop-shadow(0 0 10px var(--heart-color));
 }
 
 path {
-  stroke-width: 1px;
+  stroke: var(--heart-color);
+  stroke-width: 2px;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-dasharray: 300px;
-  animation: dash 10000ms -10000ms infinite alternate ease-in-out,
-             w 7200ms -7200ms infinite alternate ease-in-out;
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  fill: rgba(255, 45, 85, 0.05);
+  animation: 
+    draw-heart 8s linear infinite,
+    glow-path 4s ease-in-out infinite alternate;
+  transition: all 0.3s ease;
 }
 
-@keyframes dash {
+/* Keyframes */
+
+@keyframes draw-heart {
+  0% {
+    stroke-dashoffset: 400;
+  }
+  40% {
+    stroke-dashoffset: 0;
+    fill: rgba(255, 45, 85, 0.05);
+  }
+  60% {
+    stroke-dashoffset: 0;
+    fill: rgba(255, 45, 85, 0.2);
+  }
   100% {
-    stroke-dashoffset: -298px;
+    stroke-dashoffset: -400;
+    fill: rgba(255, 45, 85, 0.05);
   }
 }
 
-@keyframes w {
-  100% {
-    stroke-width: 12px;
+@keyframes glow-path {
+  from {
+    stroke-width: 2px;
+    filter: drop-shadow(0 0 5px var(--heart-color));
+  }
+  to {
+    stroke-width: 4px;
+    filter: drop-shadow(0 0 15px var(--accent-color));
   }
 }
 
-@keyframes subtle {
-  100%{
-    transform: rotate(1turn);
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
   }
+  15% {
+    transform: scale(1.15);
+  }
+  30% {
+    transform: scale(1.05);
+  }
+  45% {
+    transform: scale(1.25);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(1.2);
+  }
+}
+
+/* Add a subtle vignette */
+body::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, transparent 40%, black 150%);
+  pointer-events: none;
+  z-index: 3;
 }
